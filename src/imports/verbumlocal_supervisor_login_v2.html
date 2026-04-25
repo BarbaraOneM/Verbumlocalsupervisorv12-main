@@ -1,0 +1,73 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+  .vl-wrap { font-family:'Poppins',sans-serif; min-height:600px; background:#F3F4F6; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; }
+  .vl-card { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:2.5rem 2rem; width:100%; max-width:400px; }
+  .vl-brand { display:flex; align-items:center; gap:10px; margin-bottom:0.25rem; }
+  .vl-logo { width:36px; height:36px; background:#4023FF; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .vl-brand-text { display:flex; flex-direction:column; gap:1px; }
+  .vl-tenant-name { font-size:16px; font-weight:600; color:#1F2937; line-height:1.2; }
+  .vl-panel-label { font-size:11px; font-weight:400; color:#9CA3AF; letter-spacing:0.02em; text-transform:uppercase; }
+  .vl-divider { height:1px; background:#E5E7EB; margin:1.5rem 0; }
+  .vl-title { font-size:18px; font-weight:600; color:#1F2937; margin:0 0 0.25rem; }
+  .vl-subtitle { font-size:13px; color:#6B7280; margin:0 0 1.75rem; font-weight:400; }
+  .vl-field { margin-bottom:1rem; }
+  .vl-label { display:block; font-size:12px; font-weight:500; color:#374151; margin-bottom:6px; }
+  .vl-input-wrap { position:relative; display:flex; align-items:center; }
+  .vl-input-icon { position:absolute; left:12px; color:#9CA3AF; display:flex; align-items:center; }
+  .vl-input { width:100%; box-sizing:border-box; height:40px; border:1px solid #D1D5DB; border-radius:8px; padding:0 36px; font-family:'Poppins',sans-serif; font-size:13px; color:#1F2937; background:#F9FAFB; outline:none; transition:border-color 0.15s; }
+  .vl-input:focus { border-color:#4023FF; background:#fff; box-shadow:0 0 0 3px rgba(64,35,255,0.08); }
+  .vl-input-right { position:absolute; right:12px; color:#9CA3AF; cursor:pointer; display:flex; align-items:center; background:none; border:none; padding:0; }
+  .vl-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; margin-top:0.25rem; }
+  .vl-check-label { display:flex; align-items:center; gap:6px; font-size:12px; color:#6B7280; cursor:pointer; }
+  .vl-check { width:14px; height:14px; border:1.5px solid #D1D5DB; border-radius:4px; accent-color:#4023FF; }
+  .vl-forgot { font-size:12px; color:#4023FF; text-decoration:none; font-weight:500; }
+  .vl-forgot:hover { text-decoration:underline; }
+  .vl-btn { width:100%; height:40px; background:#4023FF; color:#fff; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:background 0.15s; }
+  .vl-btn:hover { background:#3419cc; }
+  .vl-helper { text-align:center; font-size:11px; color:#9CA3AF; margin-top:1.25rem; }
+  .vl-footer { margin-top:1.5rem; font-size:11px; color:#9CA3AF; display:flex; align-items:center; gap:6px; }
+  .vl-footer-logo { display:flex; align-items:center; gap:4px; color:#6B7280; font-weight:500; font-size:11px; }
+  .vl-dot { width:6px; height:6px; background:#4023FF; border-radius:50%; display:inline-block; }
+</style>
+<div class="vl-wrap">
+  <div class="vl-card">
+    <div class="vl-brand">
+      <div class="vl-logo">
+        <svg viewBox="0 0 20 20" fill="none" width="20" height="20"><path d="M4 4L10 16L16 4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 10H13" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="vl-brand-text">
+        <span class="vl-tenant-name">Nexbridge</span>
+        <span class="vl-panel-label">Admin Panel</span>
+      </div>
+    </div>
+    <div class="vl-divider"></div>
+    <p class="vl-title">Sign in</p>
+    <p class="vl-subtitle">Enter your credentials to continue</p>
+    <div class="vl-field">
+      <label class="vl-label">Email address</label>
+      <div class="vl-input-wrap">
+        <span class="vl-input-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 5.5L8 9.5L15 5.5" stroke="currentColor" stroke-width="1.4"/></svg></span>
+        <input class="vl-input" type="email" placeholder="your.email@nexbridge.com" value="morgan.vance@nexbridge.com" />
+      </div>
+    </div>
+    <div class="vl-field">
+      <label class="vl-label">Password</label>
+      <div class="vl-input-wrap">
+        <span class="vl-input-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="7" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.4"/></svg></span>
+        <input class="vl-input" type="password" value="••••••••••••" />
+        <button class="vl-input-right"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="8" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+    </div>
+    <div class="vl-row">
+      <label class="vl-check-label"><input type="checkbox" class="vl-check" /> Remember me</label>
+      <a href="#" class="vl-forgot">Forgot password?</a>
+    </div>
+    <button class="vl-btn">Sign in</button>
+    <p class="vl-helper">Credentials managed by your supervisor.</p>
+  </div>
+  <div class="vl-footer">
+    <span>A product by</span>
+    <span class="vl-footer-logo"><span class="vl-dot"></span> OneMeta</span>
+  </div>
+</div>
