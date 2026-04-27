@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 interface SidePanelProps {
@@ -10,14 +10,33 @@ interface SidePanelProps {
 }
 
 export function SidePanel({ isOpen, onClose, title, children, width = "480px" }: SidePanelProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(isOpen);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      // pequeño delay para que el browser pinte el estado inicial antes de la transición
+      requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
+    } else {
+      setVisible(false);
+      const t = setTimeout(() => setMounted(false), 300);
+      return () => clearTimeout(t);
+    }
+  }, [isOpen]);
+
+  if (!mounted) return null;
 
   return (
     <>
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-[9998]"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          opacity: visible ? 1 : 0,
+          transition: "opacity 0.25s ease",
+        }}
         onClick={onClose}
       />
 
@@ -26,10 +45,10 @@ export function SidePanel({ isOpen, onClose, title, children, width = "480px" }:
         className="fixed top-0 right-0 bottom-0 bg-white shadow-2xl z-[9999] flex flex-col"
         style={{
           width,
-          transform: isOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s ease-in-out",
+          transform: visible ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px"
+          borderBottomLeftRadius: "8px",
         }}
       >
         {/* Header */}

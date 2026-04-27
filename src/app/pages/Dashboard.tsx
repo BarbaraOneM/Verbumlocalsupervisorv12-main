@@ -16,6 +16,21 @@ import type { Session } from "../components/ActivityPanel";
 export default function Dashboard() {
   const [activeTeam, setActiveTeam] = useState<"all" | "alpha" | "beta">("all");
   const [activeTab, setActiveTab] = useState<"all" | "live" | "alerts">("all");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [justUpdated, setJustUpdated] = useState(false);
+  const [showRefreshTooltip, setShowRefreshTooltip] = useState(false);
+  const refreshTooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleRefresh = () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    setJustUpdated(false);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setJustUpdated(true);
+      setTimeout(() => setJustUpdated(false), 4000);
+    }, 1200);
+  };
   const [dateRangeFilter, setDateRangeFilter] = useState<"last7" | "last30" | "custom">("last7");
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [showDateDropdown, setShowDateDropdown] = useState(false);
@@ -138,37 +153,24 @@ export default function Dashboard() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto px-[0px] py-[24px]">
+      <main className="flex-1 overflow-y-auto px-[0px] pt-[16px] pb-[24px]">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4 px-[24px] py-[0px]">
-          <div>
-            <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "2px" }}>
-              VerbumLocal <span style={{ color: "#6B7280" }}>› Supervisor Panel</span>
-            </div>
-            <h1 className="m-0 flex items-center gap-2" style={{ fontSize: "22px", fontWeight: 600, color: "#1F2937" }}>
-              <span>Dashboard</span>
-              {activeTeam !== "all" && (
-                <>
-                  <span style={{ color: "#9CA3AF" }}>·</span>
-                  <span>{activeTeam === "alpha" ? "Alpha" : "Beta"}</span>
-                  {teamData[activeTeam].hasShield && (
-                    <Shield size={18} style={{ color: "#4023FF", strokeWidth: 2 }} />
-                  )}
-                </>
-              )}
-            </h1>
-            
-          </div>
+        <div className="flex items-center justify-between mb-3 px-[24px] py-[0px]">
+          <h1 className="m-0 flex items-center gap-2" style={{ fontSize: "20px", fontWeight: 600, color: "#1F2937" }}>
+            <span>Dashboard</span>
+            {activeTeam !== "all" && (
+              <>
+                <span style={{ color: "#9CA3AF" }}>·</span>
+                <span>{activeTeam === "alpha" ? "Alpha" : "Beta"}</span>
+                {teamData[activeTeam].hasShield && (
+                  <Shield size={18} style={{ color: "#4023FF", strokeWidth: 2 }} />
+                )}
+              </>
+            )}
+          </h1>
 
-          <div className="flex flex-col items-end gap-2">
-            {/* Updated timestamp */}
-            <div className="flex items-center gap-2" style={{ fontSize: "12px", color: "#9CA3AF" }}>
-              <span>Mar 19 ・ 15:58 - Updated 3 min ago</span>
-              <RefreshCw size={12} />
-            </div>
-
-            {/* Segmented control and HIPAA badge row */}
-            <div className="flex items-center gap-4">
+          {/* Segmented control and HIPAA badge row */}
+          <div className="flex items-center gap-4">
               {/* Team selector segmented control */}
               <div className="flex gap-2 bg-white p-1 rounded-[8px] border border-[#E5E7EB]">
                 <button
@@ -249,8 +251,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-        </div>
-
         {/* Body: left sections + right activity panel */}
         <div className="flex items-start">
         <div className="flex-1 min-w-0">
@@ -261,31 +261,49 @@ export default function Dashboard() {
         {/* Row 1 - Team Status (with gray background) */}
         <div className="bg-[#EEEFF1] border-t border-b border-[#E5E7EB] px-6 pt-3 pb-4 mb-5 rounded-[0px]">
           {/* Section Label */}
-          <div className="mb-2">
-            <p style={{ fontSize: "14px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px" }}>
+          <div className="flex items-center justify-between mb-2">
+            <p style={{ fontSize: "14px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px", margin: 0 }}>
               TEAM STATUS — <span style={{ color: "#4023FF" }}>NOW</span>
             </p>
+            {/* Updated timestamp */}
+            <div className="flex items-center gap-2" style={{ fontSize: "12px", color: "#9CA3AF" }}>
+              <span>{justUpdated ? "Mar 19 ・ 15:58 — Just updated" : "Mar 19 ・ 15:58 - Updated 3 min ago"}</span>
+              <div className="relative"
+                onMouseEnter={() => { refreshTooltipTimer.current = setTimeout(() => setShowRefreshTooltip(true), 500); }}
+                onMouseLeave={() => { if (refreshTooltipTimer.current) clearTimeout(refreshTooltipTimer.current); setShowRefreshTooltip(false); }}
+              >
+                <button
+                  onClick={handleRefresh}
+                  className="flex items-center justify-center hover:text-[#6B7280] transition-colors"
+                  style={{ background: "none", border: "none", padding: 0, cursor: isRefreshing ? "default" : "pointer", color: "#9CA3AF" }}
+                >
+                  <RefreshCw size={12} style={{ animation: isRefreshing ? "spin 0.8s linear infinite" : "none" }} />
+                </button>
+                {showRefreshTooltip && !isRefreshing && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 rounded-[6px] whitespace-nowrap pointer-events-none"
+                    style={{ background: "#1F2937", color: "#fff", fontSize: "11px", fontWeight: 400, zIndex: 9999 }}>
+                    Update
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* 4 Cards Grid */}
-          <div className="grid grid-cols-4 gap-4">
+          {/* Single card with 4 stat sections */}
+          <div className="bg-white rounded-[10px] border border-[#E5E7EB] flex divide-x divide-[#F3F4F6]">
+
             {/* Teams & Agents */}
-            <div className="px-4 pt-4 pb-2 bg-white rounded-[10px] border border-[#E5E7EB]">
+            <div className="flex-1 px-4 pt-4 pb-3">
               <div className="flex items-center justify-between mb-2">
                 <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>
                   Teams & Agents
                 </span>
-                <div
-                  className="w-7 h-7 rounded-[6px] flex items-center justify-center"
-                  style={{ background: "rgba(94,97,255,0.08)" }}
-                >
+                <div className="w-7 h-7 rounded-[6px] flex items-center justify-center" style={{ background: "rgba(94,97,255,0.08)" }}>
                   <Users size={14} style={{ color: "#4023FF" }} />
                 </div>
               </div>
-              <div
-                className="mb-1"
-                style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}
-              >
+              <div className="mb-1" style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}>
                 {activeTeam === "all" ? teamData.all.teams : teamData[activeTeam].agentCount}
               </div>
               <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400 }}>
@@ -299,58 +317,33 @@ export default function Dashboard() {
 
             {/* Agents Online */}
             <div
-              className="px-4 pt-4 pb-2 bg-white rounded-[10px] border border-[#E5E7EB] cursor-pointer hover:border-[#4023FF] transition-colors"
-              onClick={() => {
-                setAgentFocusSection("available");
-                setOpenPanel("agent-status");
-              }}
+              className="flex-1 px-4 pt-4 pb-3 cursor-pointer hover:bg-[#FAFAFA] transition-colors rounded-none"
+              onClick={() => { setAgentFocusSection("available"); setOpenPanel("agent-status"); }}
             >
               <div className="flex items-center justify-between mb-2">
-                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>
-                  Agents Online
-                </span>
-                <div
-                  className="w-7 h-7 rounded-[6px] flex items-center justify-center relative"
-                  style={{ background: "rgba(16,185,129,0.08)" }}
-                >
+                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>Agents Online</span>
+                <div className="w-7 h-7 rounded-[6px] flex items-center justify-center" style={{ background: "rgba(16,185,129,0.08)" }}>
                   <UserRoundCheck size={14} style={{ color: "#10B981" }} />
-
                 </div>
               </div>
-              <div
-                className="mb-1"
-                style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}
-              >
+              <div className="mb-1" style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}>
                 {activeTeam === "all" ? teamData.all.agentsOnline : teamData[activeTeam].agentsOnline}
               </div>
-              <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400 }}>
-                Logged in right now
-              </div>
+              <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400 }}>Logged in right now</div>
             </div>
 
             {/* Agents in Active Session */}
             <div
-              className="px-4 pt-4 pb-2 bg-white rounded-[10px] border border-[#E5E7EB] cursor-pointer hover:border-[#4023FF] transition-colors"
-              onClick={() => {
-                setAgentFocusSection("in-session");
-                setOpenPanel("agent-status");
-              }}
+              className="flex-1 px-4 pt-4 pb-3 cursor-pointer hover:bg-[#FAFAFA] transition-colors"
+              onClick={() => { setAgentFocusSection("in-session"); setOpenPanel("agent-status"); }}
             >
               <div className="flex items-center justify-between mb-2">
-                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>
-                  Agents in Active Session
-                </span>
-                <div
-                  className="w-7 h-7 rounded-[6px] flex items-center justify-center"
-                  style={{ background: "rgba(94,97,255,0.08)" }}
-                >
+                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>Agents in Active Session</span>
+                <div className="w-7 h-7 rounded-[6px] flex items-center justify-center" style={{ background: "rgba(94,97,255,0.08)" }}>
                   <Headphones size={14} style={{ color: "#5E61FF" }} />
                 </div>
               </div>
-              <div
-                className="mb-1"
-                style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}
-              >
+              <div className="mb-1" style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}>
                 {activeTeam === "all" ? teamData.all.agentsActive : teamData[activeTeam].agentsActive}
               </div>
               <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400 }}>
@@ -359,29 +352,19 @@ export default function Dashboard() {
             </div>
 
             {/* Sessions Today */}
-            <div className="px-4 pt-4 pb-2 bg-white rounded-[10px] border border-[#E5E7EB]">
+            <div className="flex-1 px-4 pt-4 pb-3">
               <div className="flex items-center justify-between mb-2">
-                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>
-                  Sessions Today
-                </span>
-                <div
-                  className="w-7 h-7 rounded-[6px] flex items-center justify-center"
-                  style={{ background: "rgba(94,97,255,0.08)" }}
-                >
+                <span style={{ fontSize: "12px", color: "rgba(0,0,0,0.9)", fontWeight: 400 }}>Sessions Today</span>
+                <div className="w-7 h-7 rounded-[6px] flex items-center justify-center" style={{ background: "rgba(94,97,255,0.08)" }}>
                   <CalendarCheck size={14} style={{ color: "#5E61FF" }} />
                 </div>
               </div>
-              <div
-                className="mb-1"
-                style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}
-              >
+              <div className="mb-1" style={{ fontSize: "22px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1 }}>
                 {activeTeam === "all" ? teamData.all.sessionsToday : teamData[activeTeam].sessionsToday}
               </div>
-              <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400, marginBottom: "5px" }}>
-                Completed today so far
-              </div>
-
+              <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.6)", fontWeight: 400 }}>Completed today so far</div>
             </div>
+
           </div>
         </div>
 
@@ -398,7 +381,7 @@ export default function Dashboard() {
                 <button
                   ref={dateButtonRef}
                   onClick={() => setShowDateDropdown(!showDateDropdown)}
-                  className="flex items-center justify-between px-3 py-2 rounded-[8px] border bg-white"
+                  className="flex items-center justify-between px-3 py-1 rounded-[8px] border bg-white"
                   style={{
                     fontSize: "14px",
                     fontWeight: 500,
@@ -734,7 +717,7 @@ export default function Dashboard() {
         {/* Bottom 2 panels */}
         <div className="grid grid-cols-2 gap-4 px-[24px] py-[0px]">
           {/* Language Pairs */}
-          <LanguagePairsCard />
+          <LanguagePairsCard onOpenQualityAlert={() => setOpenPanel("quality-alert")} />
 
           {/* Reply Usage */}
           <ReplyUsageCard />

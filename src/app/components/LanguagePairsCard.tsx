@@ -22,7 +22,11 @@ const languagePairsData: LanguagePair[] = [
   { pair: "en-US › es-MX", count: 1240, width: "100%", aiOff: 2, conf: 96 },
 ];
 
-export function LanguagePairsCard() {
+interface LanguagePairsCardProps {
+  onOpenQualityAlert?: () => void;
+}
+
+export function LanguagePairsCard({ onOpenQualityAlert }: LanguagePairsCardProps) {
   const [sortBy, setSortBy] = useState<"attention" | "volume">("attention");
   const [showQuality, setShowQuality] = useState(true);
   const [showInfoPopover, setShowInfoPopover] = useState(false);
@@ -222,6 +226,7 @@ export function LanguagePairsCard() {
             <div
               key={item.pair}
               className="flex items-center gap-2 group cursor-pointer px-[0px] py-[12px]"
+              onClick={needsAttention && onOpenQualityAlert ? onOpenQualityAlert : undefined}
               style={{
                 borderBottom: idx < sortedData.length - 1 ? "1px solid #F3F4F6" : "none",
                 background: needsAttention ? "rgba(220,38,38,0.05)" : "transparent",
