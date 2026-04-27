@@ -11,4 +11,4 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
   },
-]);
+], { basename: '/Verbumlocalsupervisorv12-main/' });
