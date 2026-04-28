@@ -63,66 +63,40 @@ export function ReplyUsageCard() {
 
       {/* Chart and breakdown section */}
       <div className="mb-4">
-        <p style={{ fontSize: "14px", color: "#6B7280", fontWeight: 500, marginBottom: "12px" }}>
+        <p style={{ fontSize: "14px", color: "#6B7280", fontWeight: 500, marginBottom: "10px" }}>
           Type of reply used
         </p>
 
-        {/* Donut Chart with center label */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="relative" style={{ width: "110px", height: "110px" }}>
+        <div className="flex items-center gap-4 flex-wrap">
+          {/* Donut Chart */}
+          <div className="relative flex-shrink-0" style={{ width: "110px", height: "110px" }}>
             <svg width="110" height="110" viewBox="0 0 110 110" style={{ transform: "rotate(-90deg)" }}>
-              {/* Background circle */}
-              <circle cx="55" cy="55" r="40" fill="none" stroke="#E5E7EB" strokeWidth="20" />
-              {/* Preset segment - 72% (259.2 degrees) */}
-              <circle
-                cx="55"
-                cy="55"
-                r="40"
-                fill="none"
-                stroke="#D9B8FF"
-                strokeWidth="20"
-                strokeDasharray="181 251"
-                strokeDashoffset="0"
-              />
-              {/* Typed segment - 28% */}
-              <circle
-                cx="55"
-                cy="55"
-                r="40"
-                fill="none"
-                stroke="#FFD966"
-                strokeWidth="20"
-                strokeDasharray="70 251"
-                strokeDashoffset="-181"
-              />
+              <circle cx="55" cy="55" r="40" fill="none" stroke="#E5E7EB" strokeWidth="14" />
+              <circle cx="55" cy="55" r="40" fill="none" stroke="#D9B8FF" strokeWidth="14"
+                strokeDasharray="181 251" strokeDashoffset="0" />
+              <circle cx="55" cy="55" r="40" fill="none" stroke="#FFD966" strokeWidth="14"
+                strokeDasharray="70 251" strokeDashoffset="-181" />
             </svg>
-            {/* Center label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div style={{ fontSize: "10px", fontWeight: 500, color: "rgba(0,0,0,0.9)", lineHeight: 1.1, textAlign: "center" }}>
+              <div style={{ fontSize: "11px", fontWeight: 600, color: "rgba(0,0,0,0.9)", lineHeight: 1.1, textAlign: "center" }}>
                 <div style={{ fontSize: "12px" }}>72%</div>
-                <div style={{ fontSize: "10px" }}>Preset</div>
+                <div style={{ fontSize: "10px", fontWeight: 400, color: "#9CA3AF" }}>Preset</div>
               </div>
             </div>
           </div>
 
-          {/* Breakdown bars */}
-          <div className="flex-1 flex flex-col gap-2">
-            {/* Preset */}
-            <div className="flex gap-2 items-center">
-              <span style={{ fontSize: "14px", color: "#6B7280", minWidth: "48px" }}>Preset</span>
-              <div className="flex-1 h-1 rounded-full bg-[#E5E7EB] overflow-hidden">
-                <div style={{ width: "72%", height: "100%", background: "#D9B8FF", borderRadius: "999px" }} />
+          {/* Compact legend */}
+          <div className="flex flex-col gap-2">
+            {[
+              { label: "Preset", pct: "72%", color: "#D9B8FF" },
+              { label: "Typed",  pct: "32%", color: "#FFD966" },
+            ].map(({ label, pct, color }) => (
+              <div key={label} className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                <span style={{ fontSize: "13px", color: "#6B7280", minWidth: "40px" }}>{label}</span>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "rgba(0,0,0,0.8)" }}>{pct}</span>
               </div>
-              <span style={{ fontSize: "12px", color: "#6B7280", minWidth: "24px", textAlign: "right" }}>72%</span>
-            </div>
-            {/* Typed */}
-            <div className="flex gap-2 items-center">
-              <span style={{ fontSize: "14px", color: "#6B7280", minWidth: "48px" }}>Typed</span>
-              <div className="flex-1 h-1 rounded-full bg-[#E5E7EB] overflow-hidden">
-                <div style={{ width: "32%", height: "100%", background: "#FFD966", borderRadius: "999px" }} />
-              </div>
-              <span style={{ fontSize: "12px", color: "#6B7280", minWidth: "24px", textAlign: "right" }}>32%</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -185,17 +159,17 @@ export function ReplyUsageCard() {
 
       {/* Column headers - fixed height to prevent jumping */}
       {viewMode === "agentUsage" && (
-        <div className="flex items-center gap-2 mb-2" style={{ minHeight: "16px" }}>
-          <span style={{ fontSize: "14px", color: "#9CA3AF", fontWeight: 400, minWidth: "180px" }}>
+        <div className="flex items-center gap-4 mb-2 w-full" style={{ minHeight: "16px" }}>
+          <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 400, flex: 1 }}>
             Agent
           </span>
-          <span style={{ fontSize: "14px", color: "#9CA3AF", fontWeight: 400, minWidth: "70px", textAlign: "center" }}>
+          <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 400, width: "60px", textAlign: "center" }}>
             Type
           </span>
-          <span style={{ fontSize: "14px", color: "#9CA3AF", fontWeight: 400, minWidth: "50px", textAlign: "right" }}>
+          <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 400, width: "44px", textAlign: "right" }}>
             Total
           </span>
-          <span style={{ fontSize: "14px", color: "#9CA3AF", fontWeight: 400, minWidth: "50px", textAlign: "right" }}>
+          <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 400, width: "48px", textAlign: "right" }}>
             % sess.
           </span>
         </div>
@@ -229,32 +203,34 @@ export function ReplyUsageCard() {
             {agentUsageData.map((agent, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 py-1"
+                className="flex items-center gap-4 py-1"
                 style={{
                   borderBottom: idx < 9 ? "1px solid #F9FAFB" : "none",
                 }}
               >
-                <div className="flex items-center gap-2" style={{ minWidth: "180px" }}>
-                  <span style={{ fontSize: "14px", color: "#9CA3AF", fontWeight: 400, minWidth: "20px" }}>
+                <div className="flex items-center gap-2" style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ fontSize: "13px", color: "#9CA3AF", fontWeight: 400, minWidth: "16px" }}>
                     {agent.rank}
                   </span>
-                  <span style={{ fontSize: "14px", color: "#1F2937", fontWeight: 400 }}>
+                  <span className="truncate" style={{ fontSize: "13px", color: "#1F2937", fontWeight: 400 }}>
                     {agent.name}
                   </span>
                 </div>
-                <div style={{ minWidth: "70px", textAlign: "center" }}><span
+                <div style={{ width: "60px", textAlign: "center", flexShrink: 0 }}>
+                  <span
                     className="px-2 py-0.5 rounded-[4px] inline-block"
                     style={{
-                      fontSize: "14px",
+                      fontSize: "12px",
                       fontWeight: 500,
                       color: agent.type === "Preset" ? "#BB84FB" : "#E8B20E",
                       background: agent.type === "Preset" ? "rgba(217,184,255,0.2)" : "rgba(255,217,102,0.2)",
                     }}
-                  >{agent.type}</span></div>
-                <span style={{ fontSize: "14px", color: "#6B7280", fontWeight: 500, minWidth: "50px", textAlign: "right" }}>
+                  >{agent.type}</span>
+                </div>
+                <span style={{ fontSize: "13px", color: "#6B7280", fontWeight: 500, width: "44px", textAlign: "right", flexShrink: 0 }}>
                   {agent.total}
                 </span>
-                <span style={{ fontSize: "14px", color: "#6B7280", fontWeight: 600, minWidth: "50px", textAlign: "right" }}>
+                <span style={{ fontSize: "13px", color: "#6B7280", fontWeight: 600, width: "48px", textAlign: "right", flexShrink: 0 }}>
                   {agent.sessions}%
                 </span>
               </div>

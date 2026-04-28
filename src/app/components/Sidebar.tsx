@@ -87,7 +87,7 @@ export function Sidebar() {
         {/* Dashboard - Active */}
         <Tooltip content={sidebarCollapsed ? "Dashboard" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} p-3 rounded-[8px] border-2 transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border-2 transition-all`}
             style={{
               background: "rgba(64,35,255,0.15)",
               borderColor: "#4023FF",

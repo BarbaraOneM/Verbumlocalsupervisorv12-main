@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, Activity, ClockAlert, VolumeX, Lock } from "lucide-react";
 
 export interface Session {
   id: string;
   status: "Live" | "Completed";
   agent: string;
+  team?: string;
   pair: string;
   time: string;
   dotColor: string;
@@ -46,28 +48,18 @@ export function ActivityPanel({
 
   return (
     <div
-      className={`flex-shrink-0 flex flex-col relative ${isOpen ? "bg-white border-l border-t border-[#E5E7EB]" : "bg-transparent"}`}
+      className="flex-shrink-0 relative"
       style={{
-        width: isOpen ? `${panelWidth}px` : "48px",
-        transition: isDragging ? "none" : "width 0.2s ease",
+        width: isOpen ? `${panelWidth}px` : "0px",
+        transition: isDragging ? "none" : "width 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        position: "sticky",
+        top: 0,
+        alignSelf: "flex-start",
         overflow: "visible",
-        position: isOpen ? "sticky" : "fixed",
-        top: isOpen ? 0 : "97px",
-        right: isOpen ? "auto" : 0,
-        alignSelf: isOpen ? "flex-start" : "auto",
-        maxHeight: isOpen ? "calc(100vh - 24px)" : "auto",
-        zIndex: isOpen ? "auto" : 50,
+        flexShrink: 0,
       }}
     >
-      {/* Resize handle */}
-      {isOpen && (
-        <div
-          className="absolute left-0 top-0 bottom-0 w-0 cursor-col-resize z-10 hover:bg-[#4023FF] hover:opacity-20"
-          onMouseDown={onResizeStart}
-        />
-      )}
-
-      {/* Collapse button — centered on left border */}
+      {/* Collapse button */}
       {isOpen && (
         <button
           onClick={onToggle}
@@ -77,33 +69,44 @@ export function ActivityPanel({
         </button>
       )}
 
+      {/* Expand button — rendered via portal to body so fixed positioning is never broken */}
+      {!isOpen && createPortal(
+        <div className="group" style={{ position: "fixed", right: 0, top: "70px", zIndex: 9999 }}>
+          <button
+            onClick={onToggle}
+            className="flex items-center gap-1 px-2 border-l border-y border-[#D1D5DB] bg-white hover:border-[#4023FF] transition-all group shadow-md"
+            style={{ height: "32px", borderRadius: "8px 0 0 8px" }}
+          >
+            <ChevronLeft size={13} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
+            <Activity size={13} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
+          </button>
+          <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 rounded-[6px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
+            style={{ background: "#1F2937", color: "#fff", fontSize: "11px", fontWeight: 400 }}>
+            Recent Activity
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Inner container with overflow:hidden for the push animation */}
+      <div
+        className={`flex flex-col h-full ${isOpen ? "bg-white border-l border-t border-[#E5E7EB]" : ""}`}
+        style={{ overflow: "hidden", maxHeight: "calc(100vh - 24px)", width: "100%" }}
+      >
+      {/* Resize handle */}
+      {isOpen && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-0 cursor-col-resize z-10 hover:bg-[#4023FF] hover:opacity-20"
+          onMouseDown={onResizeStart}
+        />
+      )}
+
       {/* Panel header */}
       <div
         className={`flex-shrink-0 flex ${isOpen ? "border-b border-[#E5E7EB] items-center" : "items-center justify-center"}`}
         style={{ padding: isOpen ? "16px 12px" : "10px 0px 0px 0px", minHeight: isOpen ? "57px" : "auto", gap: "8px" }}
       >
-        {isOpen ? (
-          /* Expanded: placeholder keeps layout, button rendered outside overflow:hidden via portal-like sibling */
-          <div className="w-3 flex-shrink-0" />
-        ) : (
-          /* Collapsed: pill button — right corners flush with panel edge */
-          <div className="relative group">
-            <button
-              onClick={onToggle}
-              className="flex items-center gap-1 px-2 border border-[#E5E7EB] bg-white hover:border-[#4023FF] transition-colors"
-              style={{ height: "32px", borderRadius: "8px 0 0 8px" }}
-            >
-              <ChevronLeft size={13} style={{ color: "#6B7280" }} />
-              <Activity size={13} style={{ color: "#6B7280" }} />
-            </button>
-            <div
-              className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 rounded-[6px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
-              style={{ background: "#1F2937", color: "#fff", fontSize: "12px", fontWeight: 400, zIndex: 9999 }}
-            >
-              Recent Activity
-            </div>
-          </div>
-        )}
+        {isOpen && <div className="w-3 flex-shrink-0" />}
         {isOpen && (
           <div className="relative flex-1 min-w-0">
             <p
@@ -222,33 +225,42 @@ export function ActivityPanel({
                   className={`w-[6px] h-[6px] ${session.alert ? 'rounded-[1px]' : 'rounded-full'} flex-shrink-0`}
                   style={{ background: session.dotColor }}
                 />
-                <div className="flex-1 min-w-0">
-                  {/* Row 1: name · icons · status badge */}
-                  <div className="flex items-center gap-1 mb-0.5">
-                    <span style={{ fontSize: "12px", color: "#374151", fontWeight: 500 }} className="truncate">
-                      {session.agent}
-                    </span>
-                    {session.alert && <ClockAlert size={12} style={{ color: "rgba(245,158,11,0.7)", flexShrink: 0 }} />}
-                    {session.speaker && <VolumeX size={12} style={{ color: "#FF5F38", flexShrink: 0 }} />}
-                    {session.hipaa && <Lock size={12} style={{ color: "#5B5FF2", flexShrink: 0 }} />}
-                    <span
-                      className="px-1.5 py-0.5 rounded-[4px] flex-shrink-0"
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        background: session.status === "Live" ? "rgba(16,185,129,0.08)" : "#F3F4F6",
-                        color: session.status === "Live" ? "#10B981" : "#6B7280",
-                      }}
-                    >
-                      {session.status}
-                    </span>
-                  </div>
-                  {/* Row 2: language pair · time */}
-                  <div className="flex items-center justify-between">
-                    <span style={{ fontSize: "11px", color: "#9CA3AF" }} className="truncate">
+                <div className="flex-1 min-w-0 flex gap-2 items-start">
+                  {/* Left: name ・ team / pair */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <span style={{ fontSize: "12px", color: "#374151", fontWeight: 500 }} className="truncate">
+                        {session.agent}
+                      </span>
+                      {session.team && (
+                        <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 400, flexShrink: 0 }}>
+                          ・ {session.team}
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: "11px", color: "#9CA3AF" }} className="truncate block">
                       {session.pair}
                     </span>
-                    <span style={{ fontSize: "11px", color: "#9CA3AF", flexShrink: 0, marginLeft: "8px" }}>
+                  </div>
+                  {/* Right: icons + status / time */}
+                  <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                    <div className="flex items-center gap-1">
+                      {session.alert && <ClockAlert size={12} style={{ color: "rgba(245,158,11,0.7)" }} />}
+                      {session.speaker && <VolumeX size={12} style={{ color: "#FF5F38" }} />}
+                      {session.hipaa && <Lock size={12} style={{ color: "#5B5FF2" }} />}
+                      <span
+                        className="px-1.5 py-0.5 rounded-[4px]"
+                        style={{
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          background: session.status === "Live" ? "rgba(16,185,129,0.08)" : "#F3F4F6",
+                          color: session.status === "Live" ? "#10B981" : "#6B7280",
+                        }}
+                      >
+                        {session.status}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
                       {session.time}
                     </span>
                   </div>
@@ -284,6 +296,7 @@ export function ActivityPanel({
           </div>
         </div>
       )}
+      </div>{/* end inner overflow:hidden */}
     </div>
   );
 }
