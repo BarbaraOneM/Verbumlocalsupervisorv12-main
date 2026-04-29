@@ -234,7 +234,7 @@ export default function Dashboard() {
           </div>
 
         {/* Body: left sections + right activity panel */}
-        <div className="flex items-start">
+        <div className="flex items-stretch">
         <div className="flex-1 min-w-0">
 
         {/* Subheader Bar */}
@@ -244,7 +244,7 @@ export default function Dashboard() {
         <div className="bg-[#EEEFF1] border-t border-b border-[#E5E7EB] px-6 pt-3 pb-4 mb-3 rounded-[0px]">
           {/* Section Label */}
           <div className="flex items-center justify-between mb-2">
-            <p style={{ fontSize: "14px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px", margin: 0 }}>
+            <p style={{ fontSize: "12px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px", margin: 0 }}>
               TEAM STATUS — <span style={{ color: "#4023FF" }}>NOW</span>
             </p>
             {/* Updated timestamp + collapsed activity panel button */}
@@ -355,7 +355,7 @@ export default function Dashboard() {
         <div className="mb-3 p-[0px]">
           {/* Section Label with Date Range Filter */}
           <div className="flex items-center justify-between mb-2 px-[24px] py-[0px]">
-            <p style={{ fontSize: "14px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px" }}>
+            <p style={{ fontSize: "12px", fontWeight: 500, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.14px" }}>
               SESSION PERFORMANCE — PERIOD
             </p>
             <DateRangeFilter value={dateRangeFilter} onChange={setDateRangeFilter} />

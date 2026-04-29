@@ -54,11 +54,28 @@ export function ActivityPanel({
         transition: isDragging ? "none" : "width 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
         position: "sticky",
         top: 0,
-        alignSelf: "flex-start",
         overflow: "visible",
         flexShrink: 0,
       }}
     >
+      {/* Expand button — absolute inside full-height panel, never inside scroll */}
+      {!isOpen && (
+        <div className="group" style={{ position: "absolute", left: "-45px", top: "4px", zIndex: 110 }}>
+          <button
+            onClick={onToggle}
+            className="flex items-center gap-1 px-1 border-l border-y border-[#D1D5DB] bg-white hover:border-[#4023FF] transition-all group shadow-md"
+            style={{ height: "32px", borderRadius: "8px 0 0 8px" }}
+          >
+            <ChevronLeft size={16} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
+            <Activity size={16} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
+          </button>
+          <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 rounded-[6px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
+            style={{ background: "#1F2937", color: "#fff", fontSize: "11px", fontWeight: 400 }}>
+            Recent Activity
+          </div>
+        </div>
+      )}
+
       {/* Collapse button */}
       {isOpen && (
         <button
@@ -69,24 +86,6 @@ export function ActivityPanel({
         </button>
       )}
 
-      {/* Expand button — rendered via portal to body so fixed positioning is never broken */}
-      {!isOpen && createPortal(
-        <div className="group" style={{ position: "fixed", right: 0, top: "70px", zIndex: 9999 }}>
-          <button
-            onClick={onToggle}
-            className="flex items-center gap-1 px-2 border-l border-y border-[#D1D5DB] bg-white hover:border-[#4023FF] transition-all group shadow-md"
-            style={{ height: "32px", borderRadius: "8px 0 0 8px" }}
-          >
-            <ChevronLeft size={13} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
-            <Activity size={13} className="text-[#6B7280] group-hover:text-[#1F2937] transition-colors" />
-          </button>
-          <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 rounded-[6px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
-            style={{ background: "#1F2937", color: "#fff", fontSize: "11px", fontWeight: 400 }}>
-            Recent Activity
-          </div>
-        </div>,
-        document.body
-      )}
 
       {/* Inner container with overflow:hidden for the push animation */}
       <div

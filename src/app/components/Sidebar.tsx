@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { LayoutDashboard, Users, Settings, ChevronDown, ChevronLeft, ChevronRight, Shield, Folder, MessageSquare } from "lucide-react";
 import logoImage from "../../assets/619bbd22cfce479fb2faca904fc9762f8f470fb6.png";
 import { Tooltip } from "./Tooltip";
 
 export function Sidebar() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -71,7 +74,7 @@ export function Sidebar() {
         {/* Platform Section */}
         {!sidebarCollapsed && (
           <span
-            className="px-1 mt-0 mb-1"
+            className="px-1"
             style={{
               fontSize: "10px",
               fontWeight: 500,
@@ -84,91 +87,130 @@ export function Sidebar() {
           </span>
         )}
 
-        {/* Dashboard - Active */}
+        {/* Dashboard */}
         <Tooltip content={sidebarCollapsed ? "Dashboard" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border-2 transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border transition-all`}
             style={{
-              background: "rgba(64,35,255,0.15)",
-              borderColor: "#4023FF",
-              color: "#4023FF",
+              background: location.pathname === '/dashboard' ? "rgba(64,35,255,0.15)" : "rgba(0,0,0,0.02)",
+              borderColor: location.pathname === '/dashboard' ? "#4023FF" : "#D1D5DB",
+              color: location.pathname === '/dashboard' ? "#4023FF" : "#6B7280",
               fontSize: "14px",
               fontWeight: 500,
             }}
+            onClick={() => navigate('/dashboard')}
+            onMouseEnter={(e) => {
+              if (location.pathname !== '/dashboard') {
+                e.currentTarget.style.borderColor = "#4023FF";
+                e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                e.currentTarget.style.color = "#4023FF";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (location.pathname !== '/dashboard') {
+                e.currentTarget.style.borderColor = "#D1D5DB";
+                e.currentTarget.style.background = "rgba(0,0,0,0.02)";
+                e.currentTarget.style.color = "#6B7280";
+              }
+            }}
           >
-            <LayoutDashboard size={18} />
+            <LayoutDashboard size={20} />
             {!sidebarCollapsed && <span>Dashboard</span>}
           </button>
         </Tooltip>
 
-        {/* Sessions - Inactive */}
+        {/* Sessions */}
         <Tooltip content={sidebarCollapsed ? "Sessions" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} p-3 rounded-[8px] border-2 border-transparent transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border transition-all`}
             style={{
-              background: "rgba(0,0,0,0.02)",
-              color: "#6B7280",
+              background: location.pathname === '/sessions' ? "rgba(64,35,255,0.15)" : "rgba(0,0,0,0.02)",
+              borderColor: location.pathname === '/sessions' ? "#4023FF" : "#D1D5DB",
+              color: location.pathname === '/sessions' ? "#4023FF" : "#6B7280",
               fontSize: "14px",
               fontWeight: 500,
             }}
+            onClick={() => navigate('/sessions')}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(64,35,255,0.3)";
-              e.currentTarget.style.color = "#1F2937";
+              if (location.pathname !== '/sessions') {
+                e.currentTarget.style.borderColor = "#4023FF";
+                e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                e.currentTarget.style.color = "#4023FF";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.color = "#6B7280";
+              if (location.pathname !== '/sessions') {
+                e.currentTarget.style.borderColor = "#D1D5DB";
+                e.currentTarget.style.background = "rgba(0,0,0,0.02)";
+                e.currentTarget.style.color = "#6B7280";
+              }
             }}
           >
-            <Folder size={18} />
+            <Folder size={20} />
             {!sidebarCollapsed && <span>Sessions</span>}
           </button>
         </Tooltip>
 
-        {/* Teams - Inactive */}
+        {/* Teams */}
         <Tooltip content={sidebarCollapsed ? "Teams" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} p-3 rounded-[8px] border-2 border-transparent transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border transition-all`}
             style={{
-              background: "rgba(0,0,0,0.02)",
-              color: "#6B7280",
+              background: location.pathname === '/teams' ? "rgba(64,35,255,0.15)" : "rgba(0,0,0,0.02)",
+              borderColor: location.pathname === '/teams' ? "#4023FF" : "#D1D5DB",
+              color: location.pathname === '/teams' ? "#4023FF" : "#6B7280",
               fontSize: "14px",
               fontWeight: 500,
             }}
+            onClick={() => navigate('/teams')}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(64,35,255,0.3)";
-              e.currentTarget.style.color = "#1F2937";
+              if (location.pathname !== '/teams') {
+                e.currentTarget.style.borderColor = "#4023FF";
+                e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                e.currentTarget.style.color = "#4023FF";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.color = "#6B7280";
+              if (location.pathname !== '/teams') {
+                e.currentTarget.style.borderColor = "#D1D5DB";
+                e.currentTarget.style.background = "rgba(0,0,0,0.02)";
+                e.currentTarget.style.color = "#6B7280";
+              }
             }}
           >
-            <Users size={18} />
+            <Users size={20} />
             {!sidebarCollapsed && <span>Teams</span>}
           </button>
         </Tooltip>
 
-        {/* Replies - Inactive */}
+        {/* Replies */}
         <Tooltip content={sidebarCollapsed ? "Replies" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} p-3 rounded-[8px] border-2 border-transparent transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border transition-all`}
             style={{
-              background: "rgba(0,0,0,0.02)",
-              color: "#6B7280",
+              background: location.pathname === '/replies' ? "rgba(64,35,255,0.15)" : "rgba(0,0,0,0.02)",
+              borderColor: location.pathname === '/replies' ? "#4023FF" : "#D1D5DB",
+              color: location.pathname === '/replies' ? "#4023FF" : "#6B7280",
               fontSize: "14px",
               fontWeight: 500,
             }}
+            onClick={() => navigate('/replies')}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(64,35,255,0.3)";
-              e.currentTarget.style.color = "#1F2937";
+              if (location.pathname !== '/replies') {
+                e.currentTarget.style.borderColor = "#4023FF";
+                e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                e.currentTarget.style.color = "#4023FF";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.color = "#6B7280";
+              if (location.pathname !== '/replies') {
+                e.currentTarget.style.borderColor = "#D1D5DB";
+                e.currentTarget.style.background = "rgba(0,0,0,0.02)";
+                e.currentTarget.style.color = "#6B7280";
+              }
             }}
           >
-            <MessageSquare size={18} />
+            <MessageSquare size={20} />
             {!sidebarCollapsed && <span>Replies</span>}
           </button>
         </Tooltip>
@@ -176,7 +218,7 @@ export function Sidebar() {
         {/* Settings Section */}
         {!sidebarCollapsed && (
           <span
-            className="px-1 mt-[16px] mb-1"
+            className="px-1 mt-[16px]"
             style={{
               fontSize: "10px",
               fontWeight: 500,
@@ -189,26 +231,34 @@ export function Sidebar() {
           </span>
         )}
 
-        {/* Profile Settings - Inactive */}
+        {/* Profile Settings */}
         <Tooltip content={sidebarCollapsed ? "Profile Settings" : ""} position="right" compact>
           <button
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} p-3 rounded-[8px] border-2 border-transparent transition-all`}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center h-[49px] w-[49px] mx-auto' : 'gap-3'} p-3 rounded-[8px] border transition-all`}
             style={{
-              background: "rgba(0,0,0,0.02)",
-              color: "#6B7280",
+              background: location.pathname === '/settings' ? "rgba(64,35,255,0.15)" : "rgba(0,0,0,0.02)",
+              borderColor: location.pathname === '/settings' ? "#4023FF" : "#D1D5DB",
+              color: location.pathname === '/settings' ? "#4023FF" : "#6B7280",
               fontSize: "14px",
               fontWeight: 500,
             }}
+            onClick={() => navigate('/settings')}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(64,35,255,0.3)";
-              e.currentTarget.style.color = "#1F2937";
+              if (location.pathname !== '/settings') {
+                e.currentTarget.style.borderColor = "#4023FF";
+                e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                e.currentTarget.style.color = "#4023FF";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.color = "#6B7280";
+              if (location.pathname !== '/settings') {
+                e.currentTarget.style.borderColor = "#D1D5DB";
+                e.currentTarget.style.background = "rgba(0,0,0,0.02)";
+                e.currentTarget.style.color = "#6B7280";
+              }
             }}
           >
-            <Settings size={18} />
+            <Settings size={20} />
             {!sidebarCollapsed && <span>Profile Settings</span>}
           </button>
         </Tooltip>

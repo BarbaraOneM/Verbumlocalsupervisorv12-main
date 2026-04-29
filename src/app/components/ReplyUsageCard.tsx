@@ -179,7 +179,7 @@ export function ReplyUsageCard() {
       <div style={{ minHeight: "300px" }}>
         {viewMode === "top10" ? (
           /* Top 10 replies list */
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap">
             {repliesData.map((reply, idx) => (
               <div
                 key={idx}
