@@ -10,7 +10,7 @@ export function PageLayout({ title, children }: PageLayoutProps) {
   return (
     <div
       className="flex h-screen"
-      style={{ fontFamily: "'Poppins', sans-serif", background: "#F8F8FA" }}
+      style={{ fontFamily: "'Poppins', sans-serif", background: "#F9FAFB" }}
     >
       <Sidebar />
       <main className="flex-1 overflow-y-auto pt-[16px] pb-[24px]">

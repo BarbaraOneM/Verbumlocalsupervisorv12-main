@@ -198,6 +198,46 @@ Note: "Languages are sourced from your organization's language pool. To request 
 
 ## Tab: Replies
 
+### Auto Greeting
+
+**Section title:** Auto Greeting
+**Subtitle:** Select the greeting that plays automatically at the start of every call for agents on this team.
+
+**Position:** First section in the tab, above Reply Categories.
+
+#### Dropdown behavior
+
+| State | Display |
+|-------|---------|
+| No greeting assigned (default) | "None — no auto greeting" |
+| Greeting selected | Shows greeting title |
+| Loading | Dropdown disabled, loading indicator |
+| Error loading options | Dropdown disabled — "Could not load greetings. Please refresh." |
+
+Helper text: "The selected greeting plays automatically when a call starts. Agents cannot change this."
+
+#### When the assigned greeting is edited from Replies
+
+Reflects automatically — no reassignment needed. Dropdown updates to new title on next load.
+
+#### Edge case: no auto greetings exist
+
+Dropdown replaced by empty state: "No auto greetings available yet. Go to Replies to create your first one." + "Go to Replies →"
+
+#### Deletion protection
+
+Cannot delete a greeting from Replies if assigned to one or more teams. Delete blocked with inline error: "This greeting is assigned to [N] team(s) and cannot be deleted. Remove it from all teams first."
+
+#### Toasts
+
+| Action | Toast |
+|--------|-------|
+| Greeting assigned | "Auto greeting updated" |
+| Greeting set to None | "Auto greeting removed" |
+| Save error | "Could not save changes. Please try again." |
+
+---
+
 ### Reply Categories section
 
 - Section title: "Reply Categories"

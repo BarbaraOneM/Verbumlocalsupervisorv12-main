@@ -49,6 +49,18 @@ interface LanguageOption {
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
+// Auto greetings sourced from the "Auto Greetings" category in the Replies library.
+// PENDING: replace with live fetch from /api/replies?category=auto when available.
+interface AutoGreetingOption {
+  id: string;
+  title: string;
+}
+
+const AUTO_GREETINGS_MOCK: AutoGreetingOption[] = [
+  { id: "ag1", title: "Standard Opening" },
+  { id: "ag2", title: "Medical Line Greeting" },
+];
+
 const LANGUAGE_POOL: LanguageOption[] = [
   { code: "en-US", label: "English — United States (en-US)" },
   { code: "es-MX", label: "Spanish — Mexico (es-MX)" },
@@ -147,17 +159,23 @@ function Avatar({ name, size = 32 }: { name: string; size?: number }) {
 
 // ─── Toggle ───────────────────────────────────────────────────────────────────
 
-function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: () => void; disabled?: boolean }) {
+function Toggle({ checked, onChange, disabled, compact }: {
+  checked: boolean; onChange: () => void; disabled?: boolean; compact?: boolean;
+}) {
+  const w  = compact ? "26px" : "44px";
+  const h  = compact ? "14px" : "24px";
+  const cw = compact ? "10px" : "20px";
+  const tx = compact ? "13px" : "22px";
   return (
     <button
       onClick={!disabled ? onChange : undefined}
       disabled={disabled}
       className={`relative flex-shrink-0 rounded-full transition-colors ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
-      style={{ width: "44px", height: "24px", background: checked ? "#4023FF" : "#D1D5DB" }}
+      style={{ width: w, height: h, background: checked ? "#4023FF" : "#D1D5DB" }}
     >
       <div
-        className="absolute top-[2px] w-5 h-5 bg-white rounded-full transition-transform"
-        style={{ transform: checked ? "translateX(22px)" : "translateX(2px)" }}
+        className="absolute top-[2px] bg-white rounded-full transition-transform"
+        style={{ width: cw, height: cw, transform: checked ? `translateX(${tx})` : "translateX(2px)" }}
       />
     </button>
   );
@@ -352,11 +370,14 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
     setConfirmRemove(null);
   }
 
-  const filteredPool = agentPool.filter(a =>
-    !memberSearch.trim() ||
-    a.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
-    a.email.toLowerCase().includes(memberSearch.toLowerCase())
-  );
+  // Default (no search): only unassigned + active agents.
+  // Search active: all matches, with disabled chips for assigned/inactive.
+  const filteredPool = memberSearch.trim()
+    ? agentPool.filter(a =>
+        a.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
+        a.email.toLowerCase().includes(memberSearch.toLowerCase())
+      )
+    : agentPool.filter(a => !a.assignedTo && !a.inactive);
 
   // ── Languages tab state ──
   const [showLangDrop, setShowLangDrop] = useState(false);
@@ -372,6 +393,25 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
   }
 
   // ── Replies tab state ──
+  const [autoGreetingId, setAutoGreetingId] = useState<string | null>(null);
+  const [greetingToasts, setGreetingToasts] = useState<Array<{ id: string; msg: string }>>([]);
+
+  function addGreetingToast(msg: string) {
+    const id = Math.random().toString(36).slice(2);
+    setGreetingToasts(t => [...t, { id, msg }]);
+    setTimeout(() => setGreetingToasts(t => t.filter(x => x.id !== id)), 3000);
+  }
+
+  function handleAutoGreetingChange(value: string) {
+    const newId = value === "" ? null : value;
+    setAutoGreetingId(newId);
+    if (newId === null) {
+      addGreetingToast("Auto greeting removed");
+    } else {
+      addGreetingToast("Auto greeting updated");
+    }
+  }
+
   function toggleCategory(id: string) {
     setCategories(cats => cats.map(c => c.id === id ? { ...c, enabled: !c.enabled } : c));
   }
@@ -401,7 +441,7 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
   const TABS: Tab[] = ["Members", "Languages", "Replies", "Settings"];
 
   return (
-    <div className="flex h-screen" style={{ fontFamily: "'Poppins', sans-serif", background: "#F8F8FA" }}>
+    <div className="flex h-screen" style={{ fontFamily: "'Poppins', sans-serif", background: "#F9FAFB" }}>
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto pt-[16px] pb-[24px] px-[24px]">
@@ -501,7 +541,7 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
                       </div>
                       <button
                         onClick={() => setConfirmRemove(member)}
-                        className="p-1.5 rounded-[6px] hover:bg-[#FEF2F2] transition-all"
+                        className="p-1.5 rounded-[6px] hover:bg-[#F3F4F6] transition-all"
                         title={`Remove ${member.name}`}
                       >
                         <X size={14} style={{ color: "#9CA3AF" }} />
@@ -672,6 +712,70 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
 
         {/* ── Replies Tab ── */}
         {activeTab === "Replies" && (
+          <>
+          {/* Auto Greeting section */}
+          <SectionCard
+            title="Auto Greeting"
+            subtitle="Select the greeting that plays automatically at the start of every call for agents on this team."
+          >
+            {AUTO_GREETINGS_MOCK.length === 0 ? (
+              /* Empty state — no greetings exist in the pool */
+              <div className="py-4">
+                <p style={{ fontSize: "13px", color: "#9CA3AF", marginBottom: "6px" }}>
+                  No auto greetings available yet.
+                </p>
+                <a
+                  href="/Verbumlocalsupervisorv12-main/replies"
+                  style={{ fontSize: "13px", color: "#4023FF", fontWeight: 500 }}
+                  className="hover:underline"
+                >
+                  Go to Replies to create your first one →
+                </a>
+              </div>
+            ) : (
+              <div style={{ maxWidth: "400px" }}>
+                {/* Dropdown */}
+                <div className="relative mb-3">
+                  <select
+                    value={autoGreetingId ?? ""}
+                    onChange={e => handleAutoGreetingChange(e.target.value)}
+                    className="w-full px-3 py-2 rounded-[8px] border border-[#D1D5DB] bg-white appearance-none transition-colors"
+                    style={{ fontSize: "13px", color: autoGreetingId ? "#374151" : "#9CA3AF", outline: "none", paddingRight: "36px" }}
+                    onFocus={e => (e.target.style.borderColor = "#4023FF")}
+                    onBlur={e => (e.target.style.borderColor = "#D1D5DB")}
+                  >
+                    <option value="">None — no auto greeting</option>
+                    {AUTO_GREETINGS_MOCK.map(g => (
+                      <option key={g.id} value={g.id}>{g.title}</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                    style={{ color: "#9CA3AF" }}
+                  />
+                </div>
+
+                {/* Helper text */}
+                <p style={{ fontSize: "11px", color: "#9CA3AF", lineHeight: "1.6" }}>
+                  The selected greeting plays automatically when a call starts. Agents cannot change this.
+                </p>
+              </div>
+            )}
+
+            {/* Toasts */}
+            {greetingToasts.map(t => (
+              <div
+                key={t.id}
+                className="fixed bottom-4 right-4 z-[9999] flex items-center gap-3 px-4 py-3 rounded-[8px] shadow-lg"
+                style={{ background: "#1F2937", color: "#FFFFFF", fontSize: "13px", fontWeight: 500, minWidth: "220px" }}
+              >
+                {t.msg}
+              </div>
+            ))}
+          </SectionCard>
+
+          {/* Reply Categories section */}
           <SectionCard title="Reply Categories" subtitle="Enable or disable reply categories for agents on this team">
             {categories.length === 0 ? (
               <div className="py-8 text-center">
@@ -694,7 +798,7 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
                       <div style={{ fontSize: "13px", fontWeight: 600, color: "#1F2937" }}>{cat.name}</div>
                       <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{cat.count} replies</div>
                     </div>
-                    <Toggle checked={cat.enabled} onChange={() => toggleCategory(cat.id)} />
+                    <Toggle compact checked={cat.enabled} onChange={() => toggleCategory(cat.id)} />
                   </div>
                 ))}
 
@@ -719,6 +823,7 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
               </>
             )}
           </SectionCard>
+          </>
         )}
 
         {/* ── Settings Tab ── */}
@@ -939,7 +1044,7 @@ export default function Teams() {
   }
 
   return (
-    <div className="flex h-screen" style={{ fontFamily: "'Poppins', sans-serif", background: "#F8F8FA" }}>
+    <div className="flex h-screen" style={{ fontFamily: "'Poppins', sans-serif", background: "#F9FAFB" }}>
       <Sidebar />
       <main className="flex-1 overflow-y-auto pt-[16px] pb-[24px] px-[24px]">
         {MOCK_TEAMS.length === 0 ? (

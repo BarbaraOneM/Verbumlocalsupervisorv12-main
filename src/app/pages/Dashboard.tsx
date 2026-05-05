@@ -128,7 +128,7 @@ export default function Dashboard() {
       className="flex h-screen"
       style={{
         fontFamily: "'Poppins', sans-serif",
-        background: "#F8F8FA",
+        background: "#F9FAFB",
       }}
     >
       {/* Sidebar */}
