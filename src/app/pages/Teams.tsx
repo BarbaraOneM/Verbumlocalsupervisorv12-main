@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router";
 import { Sidebar } from "../components/Sidebar";
 import { Tooltip } from "../components/Tooltip";
 import {
@@ -724,13 +725,13 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
                 <p style={{ fontSize: "13px", color: "#9CA3AF", marginBottom: "6px" }}>
                   No auto greetings available yet.
                 </p>
-                <a
-                  href="/Verbumlocalsupervisorv12-main/replies"
-                  style={{ fontSize: "13px", color: "#4023FF", fontWeight: 500 }}
+                <Link
+                  to="/replies"
+                  style={{ fontSize: "13px", color: "#4023FF", fontWeight: 500, textDecoration: "none" }}
                   className="hover:underline"
                 >
                   Go to Replies to create your first one →
-                </a>
+                </Link>
               </div>
             ) : (
               <div style={{ maxWidth: "400px" }}>
@@ -782,9 +783,9 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
                 <p style={{ fontSize: "13px", color: "#9CA3AF", marginBottom: "8px" }}>
                   No reply categories available yet.
                 </p>
-                <a href="/replies" style={{ fontSize: "13px", color: "#4023FF", fontWeight: 500 }} className="hover:underline">
+                <Link to="/replies" style={{ fontSize: "13px", color: "#4023FF", fontWeight: 500, textDecoration: "none" }} className="hover:underline">
                   Go to Replies to create your first category →
-                </a>
+                </Link>
               </div>
             ) : (
               <>
@@ -815,9 +816,9 @@ function TeamDetailView({ initialTeam, onBack }: { initialTeam: TeamData; onBack
 
                 <p style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "16px" }}>
                   To create or edit reply categories, go to{" "}
-                  <a href="/replies" style={{ color: "#4023FF" }} className="hover:underline">
+                  <Link to="/replies" style={{ color: "#4023FF", textDecoration: "none" }} className="hover:underline">
                     Replies
-                  </a>{" "}
+                  </Link>{" "}
                   in the main navigation.
                 </p>
               </>
