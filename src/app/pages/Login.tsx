@@ -290,6 +290,25 @@ export default function Login() {
         </form>
       </div>
 
+      <button
+        type="button"
+        onClick={() => window.open("https://BarbaraOneM.github.io/Verbumlocalagentv35/", "_blank")}
+        className="w-full max-w-[400px] h-10 rounded-[8px] border border-[#E5E7EB] bg-white text-[#1F2937] mt-4 transition-all"
+        style={{
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: "13px",
+          fontWeight: 500,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#F3F4F6";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "#fff";
+        }}
+      >
+        Go to Agent App
+      </button>
+
       {/* Footer */}
       <div
         className="mt-6 flex items-center gap-[6px]"
